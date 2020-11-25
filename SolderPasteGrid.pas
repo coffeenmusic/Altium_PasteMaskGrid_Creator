@@ -78,13 +78,13 @@ begin
 
     If (Pad_Rotation = 90) or (Pad_Rotation = 270) Then
     Begin // If Rotated, swap width and height
-        Pad_h := Pad.TopYSize;
-        Pad_w := Pad.TopXSize;
+        Pad_h := Pad.TopXSize;
+        Pad_w := Pad.TopYSize;
     End
     Else
     Begin
-        Pad_h := Pad.TopXSize;
-        Pad_w := Pad.TopYSize;
+        Pad_h := Pad.TopYSize;
+        Pad_w := Pad.TopXSize;
     End;
 
 
