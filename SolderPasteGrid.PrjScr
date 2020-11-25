@@ -54,12 +54,6 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Generic_ScriptingSystemBreakpoints]
-ModuleName1=C:\Users\Stephen Thompson\Documents\Macros\Altium\SolderPasteGrid\SolderPasteGrid.pas
-Line1=82
-Condition1=
-Enabled1=True
-
 [OutputGroup1]
 Name=Netlist Outputs
 Description=

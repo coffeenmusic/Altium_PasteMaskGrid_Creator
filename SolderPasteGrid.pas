@@ -14,10 +14,16 @@
 
 // Sets the paste mask expansion to a negative value less than the max pad
 // dimension to remove it from the footprint.
-function RemoveExistingPaste(Pad: IPCB_Primitive, Pad_w: Double, Pad_h: Double, Paste_Exp: Double);
+function RemoveExistingPaste(Pad: IPCB_Primitive);
 var
     Padcache      : TPadCache;
+    Pad_h, Pad_w  : Double;
+    Paste_Exp     : Double;
 begin
+    Pad_h := Pad.TopXSize;
+    Pad_w := Pad.TopYSize;
+    Paste_Exp := Pad.PasteMaskExpansion;
+
     Padcache := Pad.GetState_Cache;
     Padcache.PasteMaskExpansionValid := eCacheManual;
 
@@ -53,6 +59,7 @@ begin
 
     Pad_h := Pad.TopXSize;
     Pad_w := Pad.TopYSize;
+    //Pad_Rotation := Pad.Rotation;
 
     // Get grid counts
     Grid_x_cnt := Floor((Pad_w/INTERN2MIL)/Min_Grid_Size);
@@ -120,13 +127,6 @@ var
     Pad           : IPCB_Primitive;
     Pad_Layer     : TPCBString;
     Pad_x, Pad_y  : Double;
-    Pad_h, Pad_w  : Double;
-    Pad_Rotation  : Float;
-    Pad_Rect      : TCoordRect;
-    Pad_L         : TPCBString;
-    Pad_R         : TPCBString;
-    Pad_T         : TPCBString;
-    Pad_B         : TPCBString;
     xorigin, yorigin : Double;
 
 begin
@@ -147,31 +147,20 @@ begin
     While (Pad <> Nil) Do
     Begin
 
-
         If (Pad.Selected) Then
         Begin
             Pad_x := Pad.x - xorigin;
             Pad_y := Pad.y - yorigin;
-            Pad_h := Pad.TopXSize;
-            Pad_w := Pad.TopYSize;
             Pad_Layer := Layer2String(Pad.Layer);
-            Pad_Rotation := Pad.Rotation;
-            Pad_Rect := Pad.BoundingRectangle;
-            //Pad_L := IntToStr(Pad_Rect.Left - xorigin);
-            //Pad_R := IntToStr(Pad_Rect.Right - xorigin);
-            //Pad_T := IntToStr(Pad_Rect.Top - yorigin);
-            //Pad_B := IntToStr(Pad_Rect.Bottom - yorigin);
-
 
             If (Pad_Layer = 'Top Layer') and (Pad_x = 0) and (Pad_y = 0) Then
             Begin
                  // Set Paste Mask Expansion To Remove Current Paste Mask
-                 RemoveExistingPaste(Pad, Pad_w, Pad_h, Pad.PasteMaskExpansion);
+                 RemoveExistingPaste(Pad);
 
                  CreatePasteGrid(Board, Pad, MIN_PASTE_GRID, MIN_PASTE_GAP);
             End;
         End;
-
 
         Pad := Iterator.NextPCBObject;
     End;
