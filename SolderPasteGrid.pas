@@ -69,13 +69,26 @@ var
     Fill                                  : IPCB_Fill;
     fill_x1, fill_x2, fill_y1, fill_y2    : Double;
     xorigin, yorigin                      : Double;
+    Pad_Rotation                          : Double;
 begin
     xorigin := Board.XOrigin;
     yorigin := Board.YOrigin;
 
-    Pad_h := Pad.TopXSize;
-    Pad_w := Pad.TopYSize;
-    //Pad_Rotation := Pad.Rotation;
+    Pad_Rotation := Pad.Rotation;
+
+    If (Pad_Rotation = 90) or (Pad_Rotation = 270) Then
+    Begin // If Rotated, swap width and height
+        Pad_h := Pad.TopYSize;
+        Pad_w := Pad.TopXSize;
+    End
+    Else
+    Begin
+        Pad_h := Pad.TopXSize;
+        Pad_w := Pad.TopYSize;
+    End;
+
+
+
 
     // Get grid counts
     Grid_x_cnt := Floor((Pad_w/INTERN2MIL)/Min_Grid_Size);
@@ -185,6 +198,7 @@ end;
 
 procedure TTextForm.bRunClick(Sender: TObject);
 begin
+     Close;
      SolderPasteGrid(txtMinGridSize.Text, txtMinGap.Text);
 end;
 
