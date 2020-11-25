@@ -1,20 +1,37 @@
 {..............................................................................}
-{ Summary Pin Package Lengths Importer script.
-{         The ImportPinPackLenForm is the main form.                           }
-{         You need a Pin Package Length Data CSV file to import                }
-{         onto a Component symbol                                              }
+{ Summary Solder Paste Grid script.                                            }
+{         Creates a Footprint's Paste Mask as a Grid instead of                }
+{         just matching the pad size w/ expansion setting                      }
+{                                                                              }
 {                                                                              }
 { To use the script:                                                           }
-{  1/ Select the component in schematic that is going to be updated            }
-{  2/ Execute the ImportPins procedure and the Pins Importer dialog appears    }
-{  3/ Click on browse button to load in the CSV file of schematic pins data.   }
-{  4/ Click Run Button                                                         }
-{  5/ Check lengths in schematic:                                              }
-{            - Right click on schematic symbol and Select Properties           }
-{            - In the new window click 'Edit Pins...' in the botttom left      }
-{            - This should allow you to review the pin package lengths         }
-{  Note: Built on Altium 16.1 so menu options and locations may have changed   }
+{  1/ Select the footprint's center pad.                                       }
+{  2/ Execute the script                                                       }
 {..............................................................................}
+
+// Sets the paste mask expansion to a negative value less than the max pad
+// dimension to remove it from the footprint.
+function RemoveExistingPaste(Pad: IPCB_Primitive, Pad_w: Double, Pad_h: Double, Paste_Exp: Double);
+var
+    Padcache      : TPadCache;
+begin
+    Padcache := Pad.GetState_Cache;
+    Padcache.PasteMaskExpansionValid := eCacheManual;
+
+    If (Paste_Exp > -Pad_w) or (Paste_Exp > -Pad_h) Then
+    Begin
+         If (Pad_w > Pad_h) Then
+         Begin
+              Padcache.PasteMaskExpansion := -Pad_w;
+         End
+         Else
+         Begin
+              Padcache.PasteMaskExpansion := -Pad_h;
+         End;
+    End;
+
+    Pad.SetState_Cache := Padcache;
+end;
 
 {..............................................................................}
 procedure SolderPasteGrid();
@@ -26,7 +43,6 @@ var
     Board         : IPCB_Board;
     Iterator      : IPCB_SpatialIterator;
     Pad           : IPCB_Primitive;
-    Padcache      : TPadCache;
     Pad_Layer     : TPCBString;
     Pad_x, Pad_y  : Double;
     Pad_h, Pad_w  : Double;
@@ -36,7 +52,6 @@ var
     Pad_R         : TPCBString;
     Pad_T         : TPCBString;
     Pad_B         : TPCBString;
-    Paste_Exp     : Double;
     Fill          : IPCB_Fill;
     Grid_x_cnt    : Integer;
     Grid_y_cnt    : Integer;
@@ -77,27 +92,11 @@ begin
             //Pad_R := IntToStr(Pad_Rect.Right - xorigin);
             //Pad_T := IntToStr(Pad_Rect.Top - yorigin);
             //Pad_B := IntToStr(Pad_Rect.Bottom - yorigin);
-            Paste_Exp := Pad.PasteMaskExpansion;
 
             // Set Paste Mask Expansion To Remove Current Paste Mask
             If (Pad_Layer = 'Top Layer') and (Pad_x = 0) and (Pad_y = 0) Then
             Begin
-                Padcache := Pad.GetState_Cache;
-                Padcache.PasteMaskExpansionValid := eCacheManual;
-
-                If (Paste_Exp > -Pad_w) or (Paste_Exp > -Pad_h) Then
-                Begin
-                     If (Pad_w > Pad_h) Then
-                     Begin
-                          Padcache.PasteMaskExpansion := -Pad_w;
-                     End
-                     Else
-                     Begin
-                          Padcache.PasteMaskExpansion := -Pad_h;
-                     End;
-                End;
-
-                Pad.SetState_Cache := Padcache;
+                 RemoveExistingPaste(Pad, Pad_w, Pad_h, Pad.PasteMaskExpansion);
             End;
 
             // Get grid counts
