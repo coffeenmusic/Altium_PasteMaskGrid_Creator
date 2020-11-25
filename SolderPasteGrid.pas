@@ -11,6 +11,22 @@
 { TODO:                                                                        }
 {  - Handle rotation                                                           }
 {..............................................................................}
+Interface
+
+Type
+  TTextForm = class(TForm)
+    bRun          : TButton;
+    txtMinGridSize  : TEdit;
+    txtMinGap : TEdit;
+    lblMinGridSize: TLabel;
+    lblMinGap: TLabel;
+  End;
+
+Var
+  TextForm: TTextForm;
+
+Implementation
+
 
 // Sets the paste mask expansion to a negative value less than the max pad
 // dimension to remove it from the footprint.
@@ -117,10 +133,7 @@ begin
 End;
 
 {..............................................................................}
-procedure SolderPasteGrid();
-const
-    MIN_PASTE_GRID = 40; // Minimum Grid Size in mils
-    MIN_PASTE_GAP = 7;   // Minimum spacing between paste grids
+function SolderPasteGrid(Min_Grid_Size: Integer, Min_Gap: Integer);
 var
     Board         : IPCB_Board;
     Iterator      : IPCB_SpatialIterator;
@@ -158,7 +171,7 @@ begin
                  // Set Paste Mask Expansion To Remove Current Paste Mask
                  RemoveExistingPaste(Pad);
 
-                 CreatePasteGrid(Board, Pad, MIN_PASTE_GRID, MIN_PASTE_GAP);
+                 CreatePasteGrid(Board, Pad, Min_Grid_Size, Min_Gap);
             End;
         End;
 
@@ -166,4 +179,17 @@ begin
     End;
     Board.BoardIterator_Destroy(Iterator);
 end;
+
+
+
+
+procedure TTextForm.bRunClick(Sender: TObject);
+begin
+     SolderPasteGrid(txtMinGridSize.Text, txtMinGap.Text);
+end;
+
+Procedure RunSolderPasteGrid;
+Begin
+    TextForm.ShowModal;
+End;
 
