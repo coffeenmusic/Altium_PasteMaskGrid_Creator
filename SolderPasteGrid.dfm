@@ -33,6 +33,13 @@ object TextForm: TTextForm
     Height = 13
     Caption = 'Minimum Gap (mils)'
   end
+  object lblMinCover: TLabel
+    Left = 88
+    Top = 88
+    Width = 166
+    Height = 13
+    Caption = 'Minimum Paste Mask Coverage (%)'
+  end
   object bRun: TButton
     Left = 272
     Top = 176
@@ -59,5 +66,14 @@ object TextForm: TTextForm
     NumbersOnly = True
     TabOrder = 2
     Text = '7'
+  end
+  object txtMinCover: TEdit
+    Left = 16
+    Top = 80
+    Width = 56
+    Height = 21
+    NumbersOnly = True
+    TabOrder = 3
+    Text = '50'
   end
 end
