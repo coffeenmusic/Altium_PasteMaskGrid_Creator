@@ -1,5 +1,6 @@
 {..............................................................................}
-{ Summary Solder Paste Grid script.                                            }
+{ Summary Solder Paste Mask Grid script.                                       }
+{                 aka: Paste Mask Lattice, Paste Mask Hatch                    }
 {         Creates a Footprint's Paste Mask as a Grid instead of                }
 {         just matching the pad size w/ expansion setting                      }
 {                                                                              }
@@ -7,9 +8,6 @@
 { To use the script:                                                           }
 {  1/ Select the footprint's center pad.                                       }
 {  2/ Execute the script                                                       }
-{                                                                              }
-{ TODO:                                                                        }
-{  - Handle rotation                                                           }
 {..............................................................................}
 Interface
 
@@ -29,11 +27,18 @@ Var
 
 Implementation
 
-
-// Sets the paste mask expansion to a negative value less than the max pad
-// dimension to remove it from the footprint.
-    txtMinCover: TEdit;
-    lblMinCover: TLabel;
+{***********************************************************************************
+ * Function: RemoveExistingPaste
+ *
+ * Description: Using the given pad object, set the paste mask expansion negative
+ *              enough that there is no paste mask associated with the pad except
+ *              for what may be added later as Fills on the Top Paste layer.
+ *
+ * Input Parameters:    Pad - Center Pad object of Footprint
+ *
+ * Returns: None
+ *
+ ************************************************************************************}
 function RemoveExistingPaste(Pad: IPCB_Primitive);
 var
     Padcache      : TPadCache;
@@ -62,6 +67,26 @@ begin
     Pad.SetState_Cache := Padcache;
 end;
 
+{***********************************************************************************
+ * Function: CreatePasteGrid
+ *
+ * Description: Calculates the best size paste mask block to cover the minimum
+ *              area using the minimum gap size with n blocks in the x direction
+ *              and n blocks in the y direction. After calculating this, it
+ *              adds the fills to the Top Paste layer.
+ *
+ * Input Parameters:    Board - Current Board object
+ *                      Pad - Center Pad object of Footprint
+ *                      Min_Grid_Size - Minimum paste mask grid size in mils, where
+ *                                      size = width = height.
+ *                      Min_Gap - Minimum distance between paste mask grid blocks
+ *                                in mils.
+ *                      Min_Cover - Minimum percentage of paste mask coverage w/
+ *                                  respect to the pad area.
+ *
+ * Returns: None
+ *
+ ************************************************************************************}
 function CreatePasteGrid(Board: IPCB_Board, Pad: IPCB_Primitive, Min_Grid_Size: Integer, Min_Gap: Integer, Min_Cover: Float);
 const
     INTERN2MIL = 10000;  // Internal Unit Conversion to mils
@@ -163,7 +188,23 @@ begin
     RunProcess('PCB:Zoom');
 End;
 
-{..............................................................................}
+{***********************************************************************************
+ * Function: SolderPasteGrid
+ *
+ * Description: Gets values passed from GUI text boxes. It calls
+ *              the appropriate functions when it finds the selected center pad
+ *              object for the Footprint that is on the Top Layer.
+ *
+ * Input Parameters:    Min_Grid_Size - Minimum paste mask grid size in mils, where
+ *                                      size = width = height.
+ *                      Min_Gap - Minimum distance between paste mask grid blocks
+ *                                in mils.
+ *                      Min_Cover - Minimum percentage of paste mask coverage w/
+ *                                  respect to the pad area.
+ *
+ * Returns: None
+ *
+ ************************************************************************************}
 function SolderPasteGrid(Min_Grid_Size: Integer, Min_Gap: Integer, Min_Cover: Integer);
 var
     Board         : IPCB_Board;
@@ -213,13 +254,32 @@ end;
 
 
 
-
+{***********************************************************************************
+ * Function: bRunClick
+ *
+ * Description: Button Run Handler. Calls the function that runs the script.
+ *
+ * Input Parameters:    Sender object.
+ *
+ * Returns: None
+ *
+ ************************************************************************************}
 procedure TTextForm.bRunClick(Sender: TObject);
 begin
      Close;
      SolderPasteGrid(txtMinGridSize.Text, txtMinGap.Text, txtMinCover.Text);
 end;
 
+{***********************************************************************************
+ * Function: RunSolderPasteGrid
+ *
+ * Description: Main. Calls GUI.
+ *
+ * Input Parameters:    None.
+ *
+ * Returns: None
+ *
+ ************************************************************************************}
 Procedure RunSolderPasteGrid;
 Begin
     TextForm.ShowModal;
