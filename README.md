@@ -11,4 +11,4 @@ Creates a Footprint's Paste Mask as a Grid instead of just matching the pad size
 - Minimum Cover: Minimum % of paste mask coverage area with respect to the pads area.
 
 ## Example
-![Example](https://github.com/coffeenmusic/Altium_PasteMaskGrid_Creator/example.png)
+![Example](https://github.com/coffeenmusic/Altium_PasteMaskGrid_Creator/blob/main/example.png)
