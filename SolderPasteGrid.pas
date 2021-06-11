@@ -64,7 +64,9 @@ begin
          End;
     End;
 
+	PCBServer.SendMessageToRobots(Pad.I_ObjectAddress, c_Broadcast, PCBM_BeginModify, c_NoEventData);
     Pad.SetState_Cache := Padcache;
+	PCBServer.SendMessageToRobots(Pad.I_ObjectAddress, c_Broadcast, PCBM_EndModify, c_NoEventData); 
 end;
 
 {***********************************************************************************
@@ -177,8 +179,10 @@ begin
               Fill.Layer := eTopPaste;
               Fill.Rotation := 0;
 
+			  PCBServer.SendMessageToRobots(Fill.I_ObjectAddress, c_Broadcast, PCBM_BeginModify, c_NoEventData);
               // Add a new Fill into the PCB design database.
               Board.AddPCBObject(Fill);
+			  PCBServer.SendMessageToRobots(Fill.I_ObjectAddress, c_Broadcast, PCBM_EndModify, c_NoEventData);
          End;
     End;
 
@@ -227,6 +231,8 @@ begin
 
     xorigin := Board.XOrigin;
     yorigin := Board.YOrigin;
+	
+	PCBServer.PreProcess; 
 
     Pad := Iterator.FirstPCBObject;
     While (Pad <> Nil) Do
@@ -250,6 +256,8 @@ begin
         Pad := Iterator.NextPCBObject;
     End;
     Board.BoardIterator_Destroy(Iterator);
+	
+	PCBServer.PostProcess; 
 end;
 
 
