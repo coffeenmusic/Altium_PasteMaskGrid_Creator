@@ -174,10 +174,10 @@ begin
               fill_y2 := Grid_y_pad*(j+1) + (j+1)*Grid_Size*INTERN2MIL - (Pad_h/2);
 
               Fill := PCBServer.PCBObjectFactory(eFillObject, eNoDimension, eCreate_Default);
-              Fill.X1Location := fill_x1 + xorigin;
-              Fill.Y1Location := fill_y1 + yorigin;
-              Fill.X2Location := fill_x2 + xorigin;
-              Fill.Y2Location := fill_y2 + yorigin;
+              Fill.X1Location := fill_x1 + Pad.x;
+              Fill.Y1Location := fill_y1 + Pad.y;
+              Fill.X2Location := fill_x2 + Pad.x;
+              Fill.Y2Location := fill_y2 + Pad.y;
               Fill.Layer := eTopPaste;
               Fill.Rotation := 0;
 
@@ -246,7 +246,7 @@ begin
             Pad_y := Pad.y - yorigin;
             Pad_Layer := Layer2String(Pad.Layer);
 
-            If (Pad_Layer = 'Top Layer') and (Pad_x = 0) and (Pad_y = 0) Then
+            If (Pad_Layer = 'Top Layer') Then
             Begin
                  // Set Paste Mask Expansion To Remove Current Paste Mask
                  RemoveExistingPaste(Pad);
