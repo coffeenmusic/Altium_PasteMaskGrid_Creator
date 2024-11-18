@@ -10,5 +10,3 @@ Creates a Footprint's Paste Mask as a Grid instead of just matching the pad size
 - Minimum Gap: Minimum distance between paste mask grid blocks in mils.
 - Minimum Cover: Minimum % of paste mask coverage area with respect to the pads area.
 
-## Example
-![Example](https://github.com/coffeenmusic/Altium_PasteMaskGrid_Creator/blob/main/example.png)
