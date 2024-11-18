@@ -184,7 +184,6 @@ begin
               PCBServer.SendMessageToRobots(Fill.I_ObjectAddress, c_Broadcast, PCBM_BeginModify, c_NoEventData);
               // Add a new Fill into the PCB design database.
               Board.AddPCBObject(Fill);
-              PCBServer.SendMessageToRobots(Fill.I_ObjectAddress, c_Broadcast, PCBM_EndModify, c_NoEventData);
          End;
     End;
 
